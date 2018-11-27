@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -283,7 +284,13 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		Element root= null;
 		try {
 			ByteArrayInputStream stream = new ByteArrayInputStream(variablesString.getBytes(StandardCharsets.UTF_8));
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+			DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(stream).getDocumentElement();
 		} catch (Exception e) {
